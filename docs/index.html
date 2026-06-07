@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QC Command — Menu Bar Control for Bose QC Ultra</title>
+<meta name="description" content="QC Command is a macOS menu bar app that controls Listening Mode, EQ, battery, and automation for your Bose QC Ultra headphones.">
+<style>
+  :root {
+    --bg: #1c1c1e;
+    --bg-elevated: #2c2c2e;
+    --border: rgba(255,255,255,0.08);
+    --text: #f5f5f7;
+    --text-secondary: #a1a1a6;
+    --accent: #007aff;
+    --accent-2: #34c759;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* Nav */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 0;
+  }
+  nav .logo { font-weight: 700; font-size: 17px; display: flex; align-items: center; gap: 8px; }
+  nav .links { display: flex; gap: 28px; font-size: 14px; color: var(--text-secondary); }
+  nav .links a { color: var(--text-secondary); }
+  nav .links a:hover { color: var(--text); }
+
+  /* Hero */
+  .hero {
+    display: flex; align-items: center; gap: 64px;
+    padding: 64px 0 96px;
+  }
+  .hero-text { flex: 1; min-width: 320px; }
+  .hero-text h1 {
+    font-size: 44px; font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 18px; line-height: 1.15;
+  }
+  .hero-text h1 span { color: var(--accent); }
+  .hero-text p {
+    font-size: 18px; color: var(--text-secondary); margin-bottom: 32px; max-width: 480px;
+  }
+  .hero-image { flex: 1; min-width: 280px; text-align: center; }
+  .hero-image img {
+    max-width: 100%; height: auto;
+    filter: drop-shadow(0 20px 60px rgba(0,0,0,0.45));
+  }
+
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 26px; border-radius: 12px; font-size: 16px; font-weight: 600;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); text-decoration: none; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary { background: var(--bg-elevated); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: #3a3a3c; }
+
+  .trial-note { margin-top: 16px; font-size: 13px; color: var(--text-secondary); }
+  .trial-note strong { color: var(--text); }
+
+  /* Sections */
+  section { padding: 72px 0; border-top: 1px solid var(--border); }
+  section h2 {
+    font-size: 30px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 12px;
+  }
+  section > .wrap > p.lead {
+    font-size: 17px; color: var(--text-secondary); max-width: 620px; margin-bottom: 48px;
+  }
+
+  /* Feature grid */
+  .features {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 28px;
+  }
+  .feature {
+    background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px;
+  }
+  .feature .icon { font-size: 28px; margin-bottom: 14px; display: block; }
+  .feature h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+  .feature p { font-size: 14px; color: var(--text-secondary); }
+
+  /* Showcase rows */
+  .showcase { display: flex; align-items: center; gap: 56px; margin-bottom: 80px; }
+  .showcase:last-child { margin-bottom: 0; }
+  .showcase.reverse { flex-direction: row-reverse; }
+  .showcase-text { flex: 1; min-width: 260px; }
+  .showcase-text h3 { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+  .showcase-text p { color: var(--text-secondary); font-size: 16px; }
+  .showcase-image { flex: 1; min-width: 260px; text-align: center; }
+  .showcase-image img {
+    max-width: 100%; border-radius: 14px; border: 1px solid var(--border);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.35);
+  }
+
+  /* Pricing */
+  .pricing-card {
+    background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 20px;
+    padding: 40px; max-width: 480px;
+  }
+  .pricing-card .badge {
+    display: inline-block; background: rgba(52,199,89,0.15); color: var(--accent-2);
+    font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; margin-bottom: 16px;
+  }
+  .pricing-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .pricing-card .price { font-size: 38px; font-weight: 700; margin: 16px 0 8px; }
+  .pricing-card .price span { font-size: 15px; font-weight: 400; color: var(--text-secondary); }
+  .pricing-card ul { list-style: none; margin: 24px 0; }
+  .pricing-card li { padding: 7px 0; color: var(--text-secondary); font-size: 15px; display: flex; gap: 10px; }
+  .pricing-card li::before { content: "✓"; color: var(--accent-2); font-weight: 700; }
+
+  /* FAQ teaser */
+  .faq-list { display: flex; flex-direction: column; gap: 14px; max-width: 720px; }
+  .faq-item {
+    background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 22px;
+  }
+  .faq-item h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .faq-item p { font-size: 14px; color: var(--text-secondary); }
+
+  footer {
+    border-top: 1px solid var(--border); padding: 40px 0; text-align: center;
+    color: var(--text-secondary); font-size: 13px;
+  }
+  footer a { color: var(--text-secondary); }
+  footer a:hover { color: var(--text); }
+
+  @media (max-width: 760px) {
+    .hero { flex-direction: column; padding-top: 32px; text-align: center; }
+    .hero-text p { margin-left: auto; margin-right: auto; }
+    .cta-row { justify-content: center; }
+    .showcase, .showcase.reverse { flex-direction: column; text-align: center; }
+    nav .links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <div class="logo">🎧 QC Command</div>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://github.com/QC-Commands/qccommand-releases/releases/latest">Download</a>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-text">
+      <h1>Your Bose QC Ultra,<br>controlled from the <span>menu bar</span>.</h1>
+      <p>Switch Listening Modes, tune the EQ, check battery, automate routines, and trigger everything with keyboard shortcuts — without ever opening the Bose app.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/QC-Commands/qccommand-releases/releases/latest">⬇ Download for macOS</a>
+        <a class="btn btn-secondary" href="#pricing">See pricing</a>
+      </div>
+      <p class="trial-note">Free <strong>14-day trial</strong> · macOS 13.0 or later · Works with Bose QC Ultra &amp; QC Ultra 2</p>
+    </div>
+    <div class="hero-image">
+      <img src="images/hero.png" alt="QC Command menu bar popover showing Listening Mode, battery, and Now Playing controls">
+    </div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Everything your headphones can do — one click away</h2>
+    <p class="lead">QC Command lives quietly in your menu bar and gives you instant access to the controls Bose buries in its app.</p>
+    <div class="features">
+      <div class="feature">
+        <span class="icon">🎚️</span>
+        <h3>Listening Modes</h3>
+        <p>Switch between Quiet, Aware, and Immersion instantly — no phone, no separate app.</p>
+      </div>
+      <div class="feature">
+        <span class="icon">🎛️</span>
+        <h3>Custom Equalizer</h3>
+        <p>Built-in EQ presets plus your own custom curves, applied directly to your headphones.</p>
+      </div>
+      <div class="feature">
+        <span class="icon">🔋</span>
+        <h3>Live Battery Status</h3>
+        <p>See your headphones' charge right in the menu bar — always visible, always current.</p>
+      </div>
+      <div class="feature">
+        <span class="icon">⚙️</span>
+        <h3>Automation</h3>
+        <p>Set rules that change modes automatically based on what you're doing — meetings, focus time, commutes.</p>
+      </div>
+      <div class="feature">
+        <span class="icon">⌨️</span>
+        <h3>Keyboard Shortcuts</h3>
+        <p>Assign your own shortcut to each Listening Mode and switch without touching the mouse.</p>
+      </div>
+      <div class="feature">
+        <span class="icon">🎵</span>
+        <h3>Now Playing Controls</h3>
+        <p>See what's playing and control playback for Spotify or Apple Music straight from the popover.</p>
+      </div>
+      <div class="feature">
+        <span class="icon">🌍</span>
+        <h3>Multi-language</h3>
+        <p>Available in English, German, French, and Spanish — with custom accent colors to match your style.</p>
+      </div>
+      <div class="feature">
+        <span class="icon">🔔</span>
+        <h3>Smart Notifications</h3>
+        <p>Get notified about battery levels and connection changes — configurable to your preference.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>A closer look</h2>
+    <p class="lead">Designed to feel like part of macOS — fast, native, and out of your way until you need it.</p>
+
+    <div class="showcase">
+      <div class="showcase-text">
+        <h3>General settings, your way</h3>
+        <p>Launch at login, restore your last Listening Mode automatically, pick your music source, and choose an accent color that fits your setup.</p>
+      </div>
+      <div class="showcase-image">
+        <img src="images/general.png" alt="QC Command General settings tab">
+      </div>
+    </div>
+
+    <div class="showcase reverse">
+      <div class="showcase-text">
+        <h3>Equalizer, tuned to taste</h3>
+        <p>Pick from built-in presets like Bass Boost or Bass Reduce, or build and save your own custom EQ curves — applied straight to your headphones over Bluetooth.</p>
+      </div>
+      <div class="showcase-image">
+        <img src="images/equalizer.png" alt="QC Command Equalizer settings tab">
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-text">
+        <h3>Automation that runs itself</h3>
+        <p>Define rules — like switching to Quiet when you join a call, or Aware when you step outside — and let QC Command handle mode switching for you.</p>
+      </div>
+      <div class="showcase-image">
+        <img src="images/automation.png" alt="QC Command Automation settings tab">
+      </div>
+    </div>
+
+    <div class="showcase reverse">
+      <div class="showcase-text">
+        <h3>Shortcuts you choose</h3>
+        <p>Record your own keyboard shortcut for each Listening Mode directly in the app — no need for the macOS Shortcuts app or extra setup.</p>
+      </div>
+      <div class="showcase-image">
+        <img src="images/shortcuts.png" alt="QC Command Shortcuts settings tab">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <h2>Simple, honest pricing</h2>
+    <p class="lead">Try everything for two weeks. No credit card required to start.</p>
+
+    <div class="pricing-card">
+      <span class="badge">14-DAY FREE TRIAL</span>
+      <h3>QC Command License</h3>
+      <div class="price">One-time purchase <span>· activates on 1 device</span></div>
+      <ul>
+        <li>Full access to every feature, no limits</li>
+        <li>Free updates for the version you're on</li>
+        <li>Move your license between devices anytime (deactivate &amp; reactivate)</li>
+        <li>Direct support from the developer</li>
+      </ul>
+      <a class="btn btn-primary" href="https://qccommands.lemonsqueezy.com/checkout/buy/b591f68b-a86f-41ce-93ed-9ea4653612ae">Get a license</a>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2>Frequently asked questions</h2>
+    <p class="lead">More detailed troubleshooting lives in the <a href="https://github.com/QC-Commands/qccommand/blob/main/FAQ.md">full FAQ</a>.</p>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h4>Which headphones are supported?</h4>
+        <p>Bose QC Ultra and QC Ultra 2, connected over Bluetooth. Other Bose models with the same Bluetooth protocol may work but aren't officially tested.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Do I need to keep the Bose Music app installed?</h4>
+        <p>No — but make sure it's <em>closed</em> while using QC Command, since it can hold the Bluetooth connection and block mode switching.</p>
+      </div>
+      <div class="faq-item">
+        <h4>"QCCommand is damaged and can't be opened" — is that real?</h4>
+        <p>No, it's a Gatekeeper quirk with non-notarized apps. Run <code>xattr -cr /Applications/QCCommand.app</code> in Terminal once, and it's gone for good. Full steps in the FAQ.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How does the license work?</h4>
+        <p>One license activates on one device at a time. You can deactivate it from the About tab and activate it on a different Mac whenever you switch.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What happens when my trial ends?</h4>
+        <p>The app locks until you enter a valid license key or purchase one — your settings and data stay intact and unlock instantly once activated.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>QC Command — built for people who live in their headphones.</p>
+    <p style="margin-top: 8px;">
+      <a href="https://github.com/QC-Commands/qccommand-releases/releases/latest">Download</a>
+      · <a href="https://github.com/QC-Commands/qccommand/blob/main/FAQ.md">FAQ</a>
+      · <a href="https://qccommands.lemonsqueezy.com/checkout/buy/b591f68b-a86f-41ce-93ed-9ea4653612ae">Buy a license</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
